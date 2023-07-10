@@ -4,26 +4,28 @@ import styles from './styles.module.scss'
 
 type FormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   children: React.ReactNode;
-  onSubmit: (data: Record<string, any>) => void;
+  onFormSubmit: (data: any) => void;
+  containerStyle?: React.CSSProperties;
 }
 
 export default class Form extends React.Component<FormProps> {
   onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const { onSubmit } = this.props
+    const { onFormSubmit } = this.props
 
     const data = new FormData(event.currentTarget)
     const formData = Object.fromEntries(data)
 
-    onSubmit(formData)
+    onFormSubmit(formData)
   }
   
   render() {
-    const { children } = this.props
+    const { children, containerStyle } = this.props
 
     return (
       <form 
         className={styles.container}
+        style={containerStyle}
         onSubmit={this.onSubmit}
       >
         {children}
