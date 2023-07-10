@@ -1,0 +1,105 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.6rem;
+  
+  position: relative;
+
+  max-width: 38.4rem;
+  width: 100%;
+
+  border-radius: 0.4rem;
+
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-0.2rem) scale(1.02);
+
+    .editButton {
+      opacity: 1;
+    }
+  }
+
+  &:has(div[data-todo-completed="true"]) {
+    filter: brightness(0.6);
+  }
+}
+
+.CheckboxRoot {
+  border: 1px solid #FFFFFF;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+}
+
+.CheckboxIndicator {
+  svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    color: #FFFFFF;
+  }
+}
+
+.todoData {
+  max-width: 30rem;
+  width: 100%;
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: medium;
+  }
+
+  p {
+    font-size: 1.4rem;
+    margin-top: 0.4rem;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  span {
+    display: inline-block;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    background-color: #000000;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    margin-top: 1rem;   
+  }
+
+  &[data-todo-completed="true"] {
+    text-decoration: line-through;
+  }
+}
+
+.editButton {
+  opacity: 0;
+
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+
+  line-height: 0;
+  transition: all 0.2s;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+
+  svg {
+    width: 2.2rem;
+    height: 2.2rem;
+    color: #FFFFFF;
+  }
+}
