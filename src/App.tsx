@@ -11,13 +11,15 @@ import Button from "@/components/form/button";
 
 import RadioGroup from "@/components/radio-group";
 import RadioItem from "@/components/radio-group/radio-item";
+import TodoCard from "./components/todo-card";
 
 class App extends React.Component {
   render() {
     return (
       <>
         <Header />
-        <Form onSubmit={(formData) => console.log(formData)}>
+
+        <Form onFormSubmit={(formData) => console.log(formData)}>
           <Input
             name="title"
             placeholder="Título da tarefa" 
@@ -28,9 +30,11 @@ class App extends React.Component {
             name="description"
             placeholder="Descrição da tarefa" 
             icon={FileText}
+            defaultValue='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
           />
 
           <Input
+            type="date"
             name="deadline"
             placeholder="Prazo" 
             icon={Calendar}
@@ -39,9 +43,8 @@ class App extends React.Component {
           <Button type="submit">Add</Button>
         </Form>
 
-        <div style={{ display: 'flex', gap: '1.6rem' }}>
+        <div style={{ display: 'flex', gap: '1.6rem', marginTop: '3.2rem' }}>
           <RadioGroup
-            containerStyle={{ marginTop: '3.2rem' }}
             title="Exibir:"
             defaultValue="all"
           >
@@ -51,7 +54,6 @@ class App extends React.Component {
           </RadioGroup>
 
           <RadioGroup
-            containerStyle={{ marginTop: '3.2rem' }}
             title="Ordenação:"
             defaultValue="newest"
           >
@@ -59,6 +61,71 @@ class App extends React.Component {
             <RadioItem name="Mais antigas primeiro" value="oldest" />
           </RadioGroup>
         </div>
+
+        <ul 
+          style={{ 
+            marginTop: '3.2rem',
+            listStyle: 'none',
+            display: 'grid',
+            gap: '1.6rem',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+          }}
+        >
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-10"
+              completed={false}
+              id="1"
+            />
+          </li>
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-16"
+              completed={false}
+              id="2"
+            />
+          </li>
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-11"
+              completed={false}
+              id="3"
+            />
+          </li>
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-11"
+              completed={false}
+              id="4"
+            />
+          </li>
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-11"
+              completed={false}
+              id="5"
+            />
+          </li>
+          <li>
+            <TodoCard 
+              title="Título da tarefa"
+              description="Descrição da tarefa é um pouco longa, entao"
+              deadline="2023-07-09"
+              completed={false}
+              id="6"
+            />
+          </li>
+        </ul>
       </>
     )
   }
