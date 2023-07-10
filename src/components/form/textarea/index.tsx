@@ -6,6 +6,7 @@ type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
   icon: React.ComponentType;
   hasError?: boolean;
   name: string;
+  defaultValue?: string;
 }
 
 export default class TextArea extends React.Component<TextAreaProps> {
@@ -19,7 +20,15 @@ export default class TextArea extends React.Component<TextAreaProps> {
     }
   }
 
-  
+  componentDidMount() {
+    const { defaultValue } = this.props
+
+    if (defaultValue) {
+      this.elementRef.current!.value = defaultValue;
+
+      this.setState({ filled: !!defaultValue });
+    }
+  }
 
   componentDidUpdate() {
     this.elementRef.current!.style.height = '0px';

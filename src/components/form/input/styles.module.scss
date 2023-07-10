@@ -24,6 +24,18 @@
     cursor: text;
   }
 
+  &:has(input:focus), &:has(input[data-has-value="true"]) {
+    span {
+      display: none;
+    }
+  }
+
+  span {
+    position: absolute;
+    left: 5.6rem;
+    color: #7F7F7F;
+  }
+
   input {
     margin-left: 4rem;
     font-size: 1.6rem;
