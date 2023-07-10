@@ -1,0 +1,12 @@
+.container {
+  padding: 3.2rem 0;
+
+  h1 {
+    display: inline;
+
+    background: -webkit-linear-gradient(45deg, #FA00FF 0%, #5856D6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
