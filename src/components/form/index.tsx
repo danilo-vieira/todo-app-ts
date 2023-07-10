@@ -9,13 +9,13 @@ type FormProps = React.FormHTMLAttributes<HTMLFormElement> & {
 }
 
 export default class Form extends React.Component<FormProps> {
-  onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     const { onFormSubmit } = this.props
 
-    const data = new FormData(event.currentTarget)
+    const data = new FormData(e.currentTarget)
     const formData = Object.fromEntries(data)
-
+    
     onFormSubmit(formData)
   }
   

@@ -1,7 +1,15 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { RootState } from '@/redux/reducers/todos.reducer'
+import { ThunkDispatch } from 'redux-thunk'
+import { AnyAction } from 'redux'
+import * as z from 'zod'
 
 import * as Dialog from '@radix-ui/react-dialog'
 import { Calendar, FileText, Pencil, X } from '@phosphor-icons/react'
+
+import { asyncEditTodoAction } from '@/redux/actions/todos.actions'
+import parseZodErrors from '@/helpers/parseZodErrors'
 
 import Form from '../form'
 import Input from '../form/input'
@@ -12,41 +20,102 @@ import styles from './styles.module.scss'
 type EditModalProps = {
   trigger: React.ReactNode;
   todoId: string;
+  todos: Todo[];
+  editTodo: (todoId: string, formData: EditTodoFormData) => void;
+  isEditing: boolean;
 }
 
 type EditModalState = {
   isOpen: boolean;
+  defaultValues: {
+    title: string;
+    description: string;
+    deadline: string;
+  };
+  errors: {
+    title: string;
+    description: string;
+    deadline: string;
+  }
 }
 
-type FormDataProps = {
-  title: string;
-  description: string;
-  deadline: string;
-}
+const editTodoSchema = z.object({
+  title: z.string().min(3, { message: 'O título deve ter no mínimo 3 caracteres' }),
+  description: z.string().nonempty({ message: 'A descrição não pode ser vazia' }),
+  deadline: z.string().nonempty({ message: 'O prazo não pode ser vazio' }),
+});
 
-export default class EditModal extends React.Component<EditModalProps, EditModalState> {
+type EditTodoFormData = z.infer<typeof editTodoSchema>;
+
+class EditModal extends React.Component<EditModalProps, EditModalState> {
   modalContainer: HTMLElement
 
   constructor(props: EditModalProps) {
     super(props)
     this.state = {
       isOpen: false,
+      defaultValues: {
+        title: '',
+        description: '',
+        deadline: '',
+      },
+      errors: {
+        title: '',
+        description: '',
+        deadline: '',
+      }
     }
     this.modalContainer = document.getElementById('modal-container')!
   }
+
+  componentDidUpdate(_: any, prevState: Readonly<EditModalState>) {
+    if (prevState.isOpen !== this.state.isOpen) {
+      const { todoId, todos } = this.props
+      const todo = todos.find(todo => todo.id === todoId)!
+
+      this.setState({
+        defaultValues: {
+          title: todo.title,
+          description: todo.description,
+          deadline: todo.deadline,
+        }})
+  }}
 
   onOpenChange = (isOpen: boolean) => {
     this.setState({ isOpen });
   }
 
-  onSubmit = (formData: FormDataProps) => {
-    console.log(formData)
+  onSubmit = (formData: EditTodoFormData) => {
+    const { editTodo, todoId } = this.props;
+    const validationResult = editTodoSchema.safeParse(formData);
+    
+    if (!validationResult.success) {
+        return this.setState({
+        errors: {
+          title: parseZodErrors(validationResult, 'title'),
+          description: parseZodErrors(validationResult, 'description'),
+          deadline: parseZodErrors(validationResult, 'deadline'),
+        }
+      })
+    }
 
-    this.setState({ isOpen: false })
+    editTodo(
+      todoId,
+      formData
+    )
+    this.setState({ 
+      isOpen: false,
+      errors: {
+        title: '',
+        description: '',
+        deadline: '',
+      }
+    })
   }
 
   render() {
-    const { trigger } = this.props
+    const { trigger, isEditing } = this.props
+    const { defaultValues } = this.state
 
     return (
       <Dialog.Root 
@@ -75,12 +144,16 @@ export default class EditModal extends React.Component<EditModalProps, EditModal
               name="title"
               placeholder="Título da tarefa"
               icon={Pencil}
+              defaultValue={defaultValues.title}
+              hasError={!!this.state.errors.title}
             />
 
             <Input
               name="description"
               placeholder="Descrição da tarefa"
               icon={FileText}
+              defaultValue={defaultValues.description}
+              hasError={!!this.state.errors.description}
             />
 
             <Input
@@ -88,6 +161,8 @@ export default class EditModal extends React.Component<EditModalProps, EditModal
               name="deadline"
               placeholder="Prazo"
               icon={Calendar}
+              defaultValue={defaultValues.deadline}
+              hasError={!!this.state.errors.deadline}
             />
 
             <div className={styles.action}>
@@ -95,8 +170,8 @@ export default class EditModal extends React.Component<EditModalProps, EditModal
                 <Button
                   style={{
                     maxWidth: 'unset'
-                  }} 
-                  type="submit"
+                  }}
+                  type="button"
                 >
                   Cancelar
                 </Button>
@@ -106,15 +181,13 @@ export default class EditModal extends React.Component<EditModalProps, EditModal
                   maxWidth: 'unset'
                 }} 
                 type="submit"
+                disabled={isEditing}
               >
-                Salvar
+                {isEditing ? 'Salvando...' : 'Salvar'}
               </Button>
             </div>
           </Form>
-          
-          {/* <Dialog.Close asChild>
-            <button className="Button green">Save changes</button>
-          </Dialog.Close> */}
+
           <Dialog.Close asChild>
             <button className={styles.CloseButton} aria-label="Close">
               <X />
@@ -126,3 +199,16 @@ export default class EditModal extends React.Component<EditModalProps, EditModal
     )
   }
 }
+
+const mapStateToProps = (state: RootState) => ({
+  todos: state.todos,
+  isEditing: state.isEditing,
+});
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, unknown, AnyAction>) => ({
+  editTodo: (todoId: string, formData: EditTodoFormData) => dispatch(asyncEditTodoAction(todoId, formData)),
+})
+
+const WithRedux = connect(mapStateToProps, mapDispatchToProps)(EditModal)
+
+export default WithRedux;
