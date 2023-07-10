@@ -2,20 +2,18 @@ import React from 'react'
 import { AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from 'react-redux'
+import * as dateFns from 'date-fns'
 
 import * as Checkbox from '@radix-ui/react-checkbox'
 import { Check, NotePencil } from '@phosphor-icons/react'
+
+import EditModal from '../edit-modal'
 
 import { changeTodoStateAction } from '@/redux/actions/todos.actions';
 import { RootState } from '@/redux/reducers/todos.reducer';
 
 import styles from './styles.module.scss'
 
-import * as dayjs from 'dayjs'
-import isTomorrow from 'dayjs/plugin/isTomorrow'
-import isYesterday from 'dayjs/plugin/isYesterday'
-import isToday from 'dayjs/plugin/isToday'
-import EditModal from '../edit-modal'
 
 type TodoCardProps = {
   title: string;
@@ -26,10 +24,6 @@ type TodoCardProps = {
   changeTodoState: (todoId: string, state: boolean) => void;
 }
 
-dayjs.extend(isTomorrow)
-dayjs.extend(isYesterday)
-dayjs.extend(isToday)
-
 class TodoCard extends React.Component<TodoCardProps> {
   state = {
     deadlineMessage: '',
@@ -39,27 +33,29 @@ class TodoCard extends React.Component<TodoCardProps> {
   componentDidMount() {
     const { deadline } = this.props
 
-    if (dayjs(deadline).isAfter(dayjs(), 'day')) {
+    const parsedDeadline = deadline.replace(/-/g, '/')
+
+    if (dateFns.isAfter(new Date(parsedDeadline), new Date())) {
       this.setState({ cardColor: '#5856D6' })
 
-      if(dayjs(deadline).isTomorrow()) {
+      if(dateFns.isTomorrow(new Date(parsedDeadline))) {
         return this.setState({ deadlineMessage: 'Amanhã' })
       }
 
-      this.setState({ deadlineMessage: dayjs(deadline).format('DD/MM/YYYY') })
-    } else if (dayjs(deadline).isToday()) {
+      this.setState({ deadlineMessage: dateFns.format(new Date(parsedDeadline), 'dd/MM/yyyy') })
+    } else if (dateFns.isToday(new Date(parsedDeadline))) {
       this.setState({ 
         deadlineMessage: 'Hoje',
         cardColor: '#0BB3FF',
       })
-    } else if (dayjs(deadline).isBefore(dayjs(), 'day')) {
+    } else if (dateFns.isBefore(new Date(parsedDeadline), new Date())) {
       this.setState({ cardColor: '#FF3B30' })
 
-      if (dayjs(deadline).isYesterday()) {
+      if (dateFns.isYesterday(new Date(parsedDeadline))) {
         return this.setState({ deadlineMessage: 'Ontem' })
       }
 
-      this.setState({ deadlineMessage: dayjs(deadline).format('DD/MM/YYYY') })
+      this.setState({ deadlineMessage: dateFns.format(new Date(parsedDeadline), 'dd/MM/yyyy') })
     }
   }
 
@@ -67,27 +63,29 @@ class TodoCard extends React.Component<TodoCardProps> {
     const { deadline } = this.props
 
     if (prevProps.deadline !== this.props.deadline) {
-      if (dayjs(deadline).isAfter(dayjs(), 'day')) {
+      const parsedDeadline = deadline.replace(/-/g, '/')
+
+      if (dateFns.isAfter(new Date(parsedDeadline), new Date())) {
         this.setState({ cardColor: '#5856D6' })
-  
-        if(dayjs(deadline).isTomorrow()) {
+
+        if(dateFns.isTomorrow(new Date(parsedDeadline))) {
           return this.setState({ deadlineMessage: 'Amanhã' })
         }
-  
-        this.setState({ deadlineMessage: dayjs(deadline).format('DD/MM/YYYY') })
-      } else if (dayjs(deadline).isToday()) {
+
+        this.setState({ deadlineMessage: dateFns.format(new Date(parsedDeadline), 'dd/MM/yyyy') })
+      } else if (dateFns.isToday(new Date(parsedDeadline))) {
         this.setState({ 
           deadlineMessage: 'Hoje',
           cardColor: '#0BB3FF',
         })
-      } else if (dayjs(deadline).isBefore(dayjs(), 'day')) {
+      } else if (dateFns.isBefore(new Date(parsedDeadline), new Date())) {
         this.setState({ cardColor: '#FF3B30' })
-  
-        if (dayjs(deadline).isYesterday()) {
+
+        if (dateFns.isYesterday(new Date(parsedDeadline))) {
           return this.setState({ deadlineMessage: 'Ontem' })
         }
-  
-        this.setState({ deadlineMessage: dayjs(deadline).format('DD/MM/YYYY') })
+
+        this.setState({ deadlineMessage: dateFns.format(new Date(parsedDeadline), 'dd/MM/yyyy') })
       }
     }
   }
