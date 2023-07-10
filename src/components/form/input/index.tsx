@@ -8,14 +8,18 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name: string;
 }
 
-export default class Input extends React.Component<InputProps> {  
+export default class Input extends React.Component<InputProps> {
   render() {
+    const inputRef = React.createRef<HTMLInputElement>()
     const { icon: Icon, hasError, ...rest } = this.props
 
     return (
-      <div className={`${styles.container} ${hasError ? styles.errored : ''}`}>
+      <div
+        onClick={() => inputRef.current?.focus()}
+        className={`${styles.container} ${hasError ? styles.errored : ''}`}
+      >
         <Icon />
-        <input {...rest} />
+        <input {...rest} ref={inputRef} />
       </div>
     )
   }

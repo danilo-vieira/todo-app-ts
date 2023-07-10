@@ -20,6 +20,10 @@
     }
   }
 
+  &:hover {
+    cursor: text;
+  }
+
   input {
     margin-left: 4rem;
     font-size: 1.6rem;

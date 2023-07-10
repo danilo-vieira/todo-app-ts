@@ -26,7 +26,10 @@ export default class TextArea extends React.Component<TextAreaProps> {
     const { icon: Icon, hasError, ...rest } = this.props
 
     return (
-      <div onClick={() => textareaRef.current?.focus()} className={`${styles.container} ${hasError ? styles.errored : ''}`}>
+      <div 
+        onClick={() => textareaRef.current?.focus()} 
+        className={`${styles.container} ${hasError ? styles.errored : ''}`}
+      >
         <Icon />
         <textarea onChange={ e => this.setState({ value: e.target.value }) } ref={textareaRef} {...rest} rows={1} maxLength={250} />
       </div>

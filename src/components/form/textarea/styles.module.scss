@@ -18,6 +18,10 @@
     }
   }
 
+  &:hover {
+    cursor: text;
+  }
+
   textarea {
     margin-left: 4rem;
     font-size: 1.6rem;
