@@ -8,18 +8,41 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name: string;
 }
 
-export default class Input extends React.Component<InputProps> {
+type InputState = {
+  filled: boolean;
+}
+
+export default class Input extends React.Component<InputProps, InputState> {
+  elementRef: React.RefObject<HTMLInputElement>;
+
+  constructor(props: InputProps) {
+    super(props);
+    this.elementRef = React.createRef();
+    this.state = {
+      filled: false,
+    }
+  }
+
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ filled: !!e.target.value })
+  }
+
   render() {
-    const inputRef = React.createRef<HTMLInputElement>()
     const { icon: Icon, hasError, ...rest } = this.props
+    const { filled } = this.state
 
     return (
       <div
-        onClick={() => inputRef.current?.focus()}
+        onClick={() => this.elementRef.current?.focus()}
         className={`${styles.container} ${hasError ? styles.errored : ''}`}
       >
         <Icon />
-        <input {...rest} ref={inputRef} />
+        <input 
+          {...rest}
+          onChange={this.onChange} 
+          data-has-value={filled} 
+          ref={this.elementRef} 
+        />
       </div>
     )
   }

@@ -14,7 +14,7 @@
   border: 1px solid transparent;
   background: #2E2E2E;
 
-  &:has(input:not(:placeholder-shown)) {
+  &:has(input[data-has-value="true"]) {
     svg {
       color: #FFFFFF;
     }
@@ -35,6 +35,28 @@
     &::placeholder {
       color: #7F7F7F;
     }
+
+    &[type="date"] {
+			--placeholder-color: transparent;
+
+			&::-webkit-calendar-picker-indicator {
+				display: none;
+			};
+
+			&[data-has-value="false"] {
+					&::-webkit-datetime-edit-text,
+					&::-webkit-datetime-edit-year-field,
+					&::-webkit-datetime-edit-month-field,
+					&::-webkit-datetime-edit-day-field,
+					&::-webkit-calendar-picker-indicator {
+					color: var(--placeholder-color);
+				};
+			};
+
+			&:focus {
+				--placeholder-color: initial;
+			};
+		};
   }
 
   svg {
